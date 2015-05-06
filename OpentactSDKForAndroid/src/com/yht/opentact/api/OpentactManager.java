@@ -9,8 +9,9 @@ import com.yht.opentact.sip.SipService;
 import com.yht.opentact.sip.callback.OnSipCallback;
 
 public class OpentactManager {
-	
-	private SipService sipService;
+
+    private static OpentactManager instance;	
+    private SipService sipService;
     private IMService imService;
     public static Context APP_CONTEXT;
     public static String ACCOUNT_SID;
@@ -49,8 +50,13 @@ public class OpentactManager {
         if(cfgDefault.isEnableIm()){
             imService.imStart(opentactConfig.getImConfig());
         }
-        
-        return new OpentactManager(sipService1,imService);
+
+        instance = new OpentactManager(sipService1,imService);
+        return instance;    
+    }
+
+    public static OpentactManager getInstance(){
+    	return instance;
     }
 
     private OpentactManager(SipService ss,IMService is){
