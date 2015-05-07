@@ -13,6 +13,7 @@ import org.pjsip.pjsua2.TransportConfig;
 import org.pjsip.pjsua2.UaConfig;
 import org.pjsip.pjsua2.pj_log_decoration;
 import org.pjsip.pjsua2.pj_turn_tp_type;
+import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsip_transport_type_e;
 import org.pjsip.pjsua2.pjsua_state;
 
@@ -33,6 +34,7 @@ public class SipService {
 	public static final String TAG = SipService.class.getSimpleName();
 
 	private static SipService instance = new SipService();
+	public static SipCall currentCall;
 	private SipEndpoint ep = new SipEndpoint();
 	private SipAccount acc;
 	private EpConfig ep_cfg = new EpConfig();
@@ -41,6 +43,7 @@ public class SipService {
 	private LogWriterUtils logWriterUtil;
 	private SipConfig sipConfig = new SipConfig();
 	private SipCall sipCall;
+	
 
 	private boolean created = false;
 
@@ -88,18 +91,6 @@ public class SipService {
 						log_cfg.setWriter(logWriterUtil);
 						log_cfg.setDecor(log_cfg.getDecor() & ~(pj_log_decoration.PJ_LOG_HAS_CR.swigValue() | pj_log_decoration.PJ_LOG_HAS_NEWLINE.swigValue()));
 					}
-
-					// Audio implementation
-
-					// Video implementation
-
-					// Video codecs
-
-					// MAIN CONFIG
-
-					// DNS
-
-					// MEDIA CONFIG
 
 					// STUN
 					if (sipConfig.isStunEnable()) {
@@ -194,7 +185,9 @@ public class SipService {
 	}
 
 	public void makeCallToSid(String sid) {
-		
+		if(currentCall != null){
+			return;
+		}
 		sipCall = new SipCall(acc);
 		CallOpParam cop = new CallOpParam(true);
 		try {
@@ -202,11 +195,16 @@ public class SipService {
 			dst_uri.append("sip:11111").append(sid).append("@").append(HttpService.OPENTACT_HTTPS_SERVER_URI).append(":").append("5060");
 			sipCall.makeCall(dst_uri.toString(), cop);
 		} catch (Exception e) {
-			e.printStackTrace();
+			sipCall.delete();
+			return;
 		}
+		currentCall = sipCall;
 	}
 
 	public void makeCallToTermination(String number) {
+		if(currentCall != null){
+			return;
+		}
 		Log.d(TAG, "makeCallToTermination" + number);
 		sipCall = new SipCall(acc, -1);
 		CallOpParam cop = new CallOpParam();
@@ -222,15 +220,35 @@ public class SipService {
 			sipCall.delete();
 			return;
 		}
+		currentCall = sipCall;
 
 	}
 
 	public void answer() {
-
+		if(currentCall != null){
+			CallOpParam prm = new CallOpParam();
+			prm.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
+			try {
+				currentCall.answer(prm);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else{
+			onSipCallback.onIncomingCallListener(SipConstants.ON_SIP_CALLBACK_MSG_INCOMINGCALL_ERROR);
+		}
 	}
 
 	public void hangup() {
-
+		if(currentCall != null){
+			CallOpParam prm = new CallOpParam();
+			prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
+			try {
+				currentCall.hangup(prm);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void removeAccount() {
@@ -244,6 +262,6 @@ public class SipService {
 	public void setEp(SipEndpoint ep) {
 		this.ep = ep;
 	}
-	
+
 	
 }

@@ -88,6 +88,14 @@ public class OpentactManager {
         return imService;
     }
 
+    public void answerCall(){
+    	this.sipService.answer();
+    }
+    
+    public void hangupCall(){
+    	this.sipService.hangup();
+    }
+    
     public void setImService(IMService imService) {
         this.imService = imService;
     }

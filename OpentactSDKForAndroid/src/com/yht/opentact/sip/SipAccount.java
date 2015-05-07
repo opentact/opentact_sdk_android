@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import org.pjsip.pjsua2.Account;
 import org.pjsip.pjsua2.AccountConfig;
 import org.pjsip.pjsua2.AccountInfo;
+import org.pjsip.pjsua2.CallInfo;
 import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.OnIncomingCallParam;
 import org.pjsip.pjsua2.OnRegStateParam;
@@ -45,8 +46,14 @@ public class SipAccount extends Account{
 
     @Override
     public void onIncomingCall(OnIncomingCallParam prm) {
-    	SipService.onSipCallback.onIncomingCallListener("have a call Incoming");
     	SipCall call = new SipCall(this,prm.getCallId());
+    	if(SipService.currentCall != null){
+    		call.delete();
+    		return;
+    	}
+    	else{
+    		SipService.currentCall = call;
+    	}
 		CallOpParam cop = new CallOpParam();
     	cop.setStatusCode(pjsip_status_code.PJSIP_SC_RINGING);
     	try {
@@ -54,10 +61,13 @@ public class SipAccount extends Account{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-    	cop.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
     	try {
-			call.answer(cop);
-		} catch (Exception e) {
+			CallInfo ci = call.getInfo();
+			String str = ci.getRemoteUri();
+			String sipNumber = str.substring(str.indexOf("sip:")+4,str.indexOf('@'));
+			SipService.onSipCallback.onIncomingCallListener(sipNumber);
+    	} catch (Exception e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     }

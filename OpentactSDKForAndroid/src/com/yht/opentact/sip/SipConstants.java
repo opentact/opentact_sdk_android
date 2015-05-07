@@ -12,6 +12,8 @@ public class SipConstants {
     public static final String SIP_SERVER_SCHEME = "digest";
     public static final int SIP_SERVER_DATATYEP = 0;
     
+    public static final String ON_SIP_CALLBACK_MSG_INCOMINGCALL_ERROR = "there has a incoming call error";
+    
     public class CODEC_ID{
     	public final static String SPEEX_16000 = "speex/16000/1"; 
     	public final static String SPEEX_8000 = "speex/8000/1";
