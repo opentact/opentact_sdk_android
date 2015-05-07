@@ -64,14 +64,72 @@ or setting configure by yourself. e.g:
 
 ###3.opentact callback
 
-application needs to implement the OnSipCallback to get the notification,such as <br>
+application needs to implement the OnSipCallback to get the notification,such as <br>:
  - incoming call<br>
  - call state<br>
  - sip register state<br>
 
-and also needs to extend the IMCallback to listen into<br>
+e.g
+
+```java
+    public class SipCallback implements OnSipCallback {
+
+    @Override
+	public void onIncomingCallListener(String msg) {
+		System.out.println("sample onSipCallback onincomingCallListener " + msg);
+	}
+	
+	@Override
+	public void onCallStateListener(String msg) {
+		System.out.println("sample onSipCallback onCallStateListener " + msg);
+	}
+
+	@Override
+	public void onSipRegStateListener(boolean isActive) {
+		if(isActive){
+			System.out.println("sipAccount create success" );
+		}
+	}
+}
+```
+
+and also needs to extend the IMCallback to listen into<br>:
  - IM Action<br>
  - message arrived<br>
+ - lost connect
+ 
+e.g
+
+```java
+    public class MyIMCallback extends IMCallback{
+    
+    public MyIMCallback() {
+    	super();
+	}
+    
+    public MyIMCallback(ACTION action) {
+    	super(action);
+	}
+    
+    public void onActionCallback(ACTION action, boolean isSuccess, Throwable throwable) {
+    	// TODO something you want to do
+		System.out.println("onActionCallback " + action.toString());
+	}
+    
+    @Override
+    public void messageArrivedCallback(String ssid, String msg, int Qos) {
+		// TODO something you want to do
+
+	}
+    
+    @Override
+    public void connectLostCallback(boolean isLost, Throwable throwable) {
+		// TODO something you want to do
+
+	}
+
+}
+```
 
 ###4.start opentact
 
