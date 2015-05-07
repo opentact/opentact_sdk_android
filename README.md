@@ -4,7 +4,7 @@ opentact_sdk_android
 ##Download and Import
 ---
 
- - download **opentact-sdk-android-[version].jar** and **armeabi/libpjsua2.so** from releases page and copy it into the `libs` folder of your
+ - download **[opentact-sdk-android-[version].jar](https://github.com/opentact/opentact_sdk_android/releases)** and **[armeabi/libpjsua2.so](https://github.com/opentact/opentact_sdk_android/releases)** from releases page and copy it into the `libs` folder of your
  application project.
 
  **or**
@@ -118,3 +118,5 @@ Call opentactManager.imSubscribe(IMCallback callback) so that others send messag
 Call opentactManager.imPublish(String frient_ssid,String msg,IMCallback callback) to send message to friends,
 see the sample for more detail.
 
+
+Edit By [MaHua](http://mahua.jser.me)
