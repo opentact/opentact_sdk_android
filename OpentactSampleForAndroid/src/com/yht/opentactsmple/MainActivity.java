@@ -37,9 +37,14 @@ import com.yht.opentact.util.HttpService.OnMessageResponseListener;
 public class MainActivity extends Activity implements Handler.Callback, OnItemClickListener, OnClickListener {
 
 	public static final String TAG = MainActivity.class.getSimpleName();
+	/***
+	 * 	these SID,SSID,AUTHTOKEN are test data, please change to your data.
+	 */
 	public static final String SID = "553d9e6d1073e9455be0b30e";
 	public static final String SSID = "553d9f231073e9465b4ac7da";
 	public static final String AUTHTOKEN = "cb1f04160faa4ccbb8b368aebbd2a873";
+	
+	
 	public static final int DO_GET_FRIENDS = 1;
 	public static final int DO_GET_SIPACCOUNT = 2;
 	public static final int CALLING_TO_PHONENUMBER = 3;
