@@ -9,7 +9,11 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -38,17 +42,17 @@ public class MainActivity extends Activity implements Handler.Callback, OnItemCl
 
 	public static final String TAG = MainActivity.class.getSimpleName();
 	/***
-	 * 	these SID,SSID,AUTHTOKEN are test data, please change to your data.
+	 * these SID,SSID,AUTHTOKEN are test data, please change to your data.
 	 */
 	public static final String SID = "553d9e6d1073e9455be0b30e";
 	public static final String SSID = "553d9f231073e9465b4ac7da";
 	public static final String AUTHTOKEN = "cb1f04160faa4ccbb8b368aebbd2a873";
-	
-	
+
 	public static final int DO_GET_FRIENDS = 1;
 	public static final int DO_GET_SIPACCOUNT = 2;
 	public static final int CALLING_TO_PHONENUMBER = 3;
 	public static final int CALLING_TO_SIPACCOUNT = 4;
+	public static final int HAS_INCOMING_CALL = 5;
 	public static final String JSON_KEY_FRIENDS = "friends";
 	public static final String JSON_KEY_SID = "sid";
 
@@ -68,10 +72,15 @@ public class MainActivity extends Activity implements Handler.Callback, OnItemCl
 	private String[] friends_sid;
 	private String sipAccount;
 	private String sipAccountPwd;
+	private NotifyCall notifyCall;
+	private IntentFilter intentFilter;
 
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		notifyCall = new NotifyCall();
+		intentFilter  = new IntentFilter("com.yht.opentactsmple.notifycall");
 		setContentView(R.layout.layout_main);
 		initListview();
 		initLayout();
@@ -82,10 +91,26 @@ public class MainActivity extends Activity implements Handler.Callback, OnItemCl
 	protected void onDestroy() {
 		super.onDestroy();
 		opentactManager.stopSipService();
-		if(opentactManager != null){
+		if (opentactManager != null) {
 			opentactManager = null;
 		}
 	}
+
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		registerReceiver(notifyCall, intentFilter);
+	}
+	
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		unregisterReceiver(notifyCall);
+	}
+	
+	
 	/**
 	 * initialize opentact
 	 */
@@ -95,7 +120,7 @@ public class MainActivity extends Activity implements Handler.Callback, OnItemCl
 		cfg.getSipConfig().setIceEnable(true);
 		cfg.getSipConfig().setStunEnable(true);
 		cfg.getSipConfig().setTurnEnable(true);
-		onSipCallback = new SipCallback();
+		onSipCallback = new SipCallback(getApplicationContext());
 		myIMCallback = new MyIMCallback();
 
 		// start the opentact
@@ -215,6 +240,11 @@ public class MainActivity extends Activity implements Handler.Callback, OnItemCl
 				e.printStackTrace();
 			}
 			break;
+			
+		case HAS_INCOMING_CALL:
+			btnAnswerCall.setVisibility(View.VISIBLE);
+			btnHangupCall.setVisibility(View.VISIBLE);
+			break;
 		}
 		return false;
 	}
@@ -246,6 +276,14 @@ public class MainActivity extends Activity implements Handler.Callback, OnItemCl
 				opentactManager
 						.imPublish(friends_sid[mListView.getCheckedItemPosition()], "test message from android and NO." + random.nextInt(), myIMCallback);
 			}
+			break;
+
+		case R.id.btn_answer:
+			opentactManager.answerCall();
+			break;
+
+		case R.id.btn_hangup:
+			opentactManager.hangupCall();
 			break;
 		}
 
@@ -297,6 +335,16 @@ public class MainActivity extends Activity implements Handler.Callback, OnItemCl
 			}
 		});
 		build.create().show();
+	}
+	
+	public class NotifyCall extends BroadcastReceiver{
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Message msg = Message.obtain(hand, HAS_INCOMING_CALL, intent.getBooleanExtra("isIncomingCall", false));
+			msg.sendToTarget();
+		}
+		
 	}
 
 }
