@@ -108,7 +108,7 @@ public class OpentactManager {
         this.imService = imService;
     }
     
-    public void makeCallToSSid(String friend_ssid){
+    public void makeCallToSsid(String friend_ssid){
     	this.sipService.makeCallToSid(friend_ssid);
     }
     
