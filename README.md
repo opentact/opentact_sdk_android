@@ -16,7 +16,7 @@ opentact_sdk_android
 
     Note that this has only been tested using ​Eclipse with ADT, however it might also be applicable for ​Android Studio.
 
-you can find mord detail from the **[OpeantactSampleForAndroid]()** and **[OpentactAPI Doc](http://opentact-api-documentation.readthedocs.org/en/latest/index.html#)**.
+you can find mord detail from the **[OpeantactSampleForAndroid](https://github.com/opentact/opentact_sdk_android/tree/master/OpentactSampleForAndroid)** and **[OpentactAPI Doc](http://opentact-api-documentation.readthedocs.org/en/latest/index.html#)**.
 
 ###1.AndroidManifest.xml
 
