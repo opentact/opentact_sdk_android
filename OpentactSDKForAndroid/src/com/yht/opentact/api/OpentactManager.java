@@ -69,7 +69,7 @@ public class OpentactManager {
     }
     
     public void stopOpentact(){
-    	
+    	stopSipService();
     }
     
     public void stopSipService(){
@@ -96,12 +96,20 @@ public class OpentactManager {
     	this.sipService.hangup();
     }
     
+    public void setSipCodecPriority(String codecID,short priority,boolean isDefault){
+    	this.sipService.setCodecPriority(codecID, priority, isDefault);
+    }
+    
+    public String[] getCodecList(){
+    	return this.sipService.getCodecList();
+    }
+    
     public void setImService(IMService imService) {
         this.imService = imService;
     }
     
-    public void makeCallToSid(String sid){
-    	this.sipService.makeCallToSid(sid);
+    public void makeCallToSSid(String friend_ssid){
+    	this.sipService.makeCallToSid(friend_ssid);
     }
     
     public void makeCallToTermination(String number){
@@ -116,8 +124,8 @@ public class OpentactManager {
     	this.imService.doConnect(callback);
     }
     
-    public void imPublish(String frient_ssid,String msg,IMCallback callback){
-    	this.imService.publish(frient_ssid, msg, callback);
+    public void imPublish(String friend_ssid,String msg,IMCallback callback){
+    	this.imService.publish(friend_ssid, msg, callback);
     }
     
     public void imSubscribe(IMCallback callback){

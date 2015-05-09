@@ -1,5 +1,7 @@
 package com.yht.opentact.sip;
 
+import java.util.Map;
+
 import org.json.JSONObject;
 import org.pjsip.pjsua2.AccountConfig;
 import org.pjsip.pjsua2.AuthCredInfo;
@@ -43,7 +45,6 @@ public class SipService {
 	private LogWriterUtils logWriterUtil;
 	private SipConfig sipConfig = new SipConfig();
 	private SipCall sipCall;
-	
 
 	private boolean created = false;
 
@@ -57,11 +58,9 @@ public class SipService {
 		return created;
 	}
 
-	
 	public static SipService getInstance() {
 		return instance;
 	}
-
 
 	public boolean sipStart(SipConfig cfg, OnSipCallback callback) {
 		if (cfg != null) {
@@ -123,11 +122,11 @@ public class SipService {
 
 		}
 		created = true;
-		setCodecPriority();
+		setCodecsPriorityByDefault();;
 		return true;
 	}
-	
-	private void setCodecPriority(){
+
+	private void setCodecsPriorityByDefault() {
 		try {
 			ep.codecSetPriority(SipConstants.CODEC_ID.G722_16000, (short) 0);
 			ep.codecSetPriority(SipConstants.CODEC_ID.GSM_8000, (short) 0);
@@ -138,6 +137,32 @@ public class SipService {
 			ep.codecSetPriority(SipConstants.CODEC_ID.SPEEX_8000, (short) 0);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	public void setCodecPriority(String codecID,short priority,boolean isDefault) {
+			try {
+				if(isDefault){
+					ep.codecSetPriority(codecID, (short)0);
+				}
+				else{
+					ep.codecSetPriority(codecID, priority);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+	public String[] getCodecList() {
+		try {
+			int listSize = (int) ep.codecEnum().size();
+			String[] codecList = new String[listSize];
+			for (int i = 0; i < listSize; i++) {
+				codecList[i] = ep.codecEnum().get(i).getCodecId();
+			}
+			return codecList;
+		} catch (Exception e) {
+			return null;
 		}
 	}
 
@@ -185,7 +210,7 @@ public class SipService {
 	}
 
 	public void makeCallToSid(String sid) {
-		if(currentCall != null){
+		if (currentCall != null) {
 			return;
 		}
 		sipCall = new SipCall(acc);
@@ -202,7 +227,7 @@ public class SipService {
 	}
 
 	public void makeCallToTermination(String number) {
-		if(currentCall != null){
+		if (currentCall != null) {
 			return;
 		}
 		Log.d(TAG, "makeCallToTermination" + number);
@@ -225,7 +250,7 @@ public class SipService {
 	}
 
 	public void answer() {
-		if(currentCall != null){
+		if (currentCall != null) {
 			CallOpParam prm = new CallOpParam();
 			prm.setStatusCode(pjsip_status_code.PJSIP_SC_OK);
 			try {
@@ -233,14 +258,13 @@ public class SipService {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
-		else{
+		} else {
 			onSipCallback.onIncomingCallListener(SipConstants.ON_SIP_CALLBACK_MSG_INCOMINGCALL_ERROR);
 		}
 	}
 
 	public void hangup() {
-		if(currentCall != null){
+		if (currentCall != null) {
 			CallOpParam prm = new CallOpParam();
 			prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
 			try {
@@ -263,5 +287,4 @@ public class SipService {
 		this.ep = ep;
 	}
 
-	
 }

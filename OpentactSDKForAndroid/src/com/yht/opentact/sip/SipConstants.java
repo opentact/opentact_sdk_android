@@ -24,6 +24,7 @@ public class SipConstants {
     	public final static String G722_16000 = "G722/16000/1";
     	public final static String G729_8000 = "G729/8000/1";
     	public final static String ILBC_8000 = "iLBC/8000/1";
+    	
     }
 
     public static String buildSipIdUri(String username){
@@ -31,4 +32,5 @@ public class SipConstants {
         idUri.append("sip:").append(username).append("@").append(SIP_SERVER_URI);
         return idUri.toString().trim();
     }
+    
 }
