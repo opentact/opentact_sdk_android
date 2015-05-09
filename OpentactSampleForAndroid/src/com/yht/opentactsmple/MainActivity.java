@@ -235,7 +235,7 @@ public class MainActivity extends Activity implements Handler.Callback, OnItemCl
 			try {
 				JSONObject json = (JSONObject) msg.obj;
 				String sipNumber = json.getString("sip_number");
-				opentactManager.makeCallToSid(sipNumber);
+				opentactManager.makeCallToSsid(sipNumber);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
