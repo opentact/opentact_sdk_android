@@ -124,7 +124,8 @@ public class MainActivity extends Activity implements Handler.Callback, OnItemCl
 		myIMCallback = new MyIMCallback();
 
 		// start the opentact
-		opentactManager = OpentactManager.startWork(getApplicationContext(), SID, AUTHTOKEN, SSID, cfg, onSipCallback);
+		opentactManager = OpentactManager.getInstance();
+		opentactManager.startWork(getApplicationContext(), SID, AUTHTOKEN, SSID, cfg, onSipCallback);
 
 		// IM connection
 		myIMCallback.setAction(ACTION.CONNECT);
