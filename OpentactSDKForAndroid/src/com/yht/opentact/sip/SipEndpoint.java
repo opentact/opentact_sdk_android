@@ -1,7 +1,6 @@
 package com.yht.opentact.sip;
 
 import org.pjsip.pjsua2.Endpoint;
-import org.pjsip.pjsua2.OnNatCheckStunServersCompleteParam;
 import org.pjsip.pjsua2.OnNatDetectionCompleteParam;
 
 public class SipEndpoint extends Endpoint{

@@ -1,16 +1,12 @@
 package com.yht.opentact.im;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.IMqttActionListener;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 import com.yht.opentact.api.OpentactManager;
 import com.yht.opentact.im.callback.IMCallback;
 
-import android.content.Context;
 
 public class IMService {
 

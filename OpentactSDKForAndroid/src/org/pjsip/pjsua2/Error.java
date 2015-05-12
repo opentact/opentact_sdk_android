@@ -9,7 +9,11 @@
 package org.pjsip.pjsua2;
 
 public class Error extends java.lang.Exception {
-  private long swigCPtr;
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+private long swigCPtr;
   protected boolean swigCMemOwn;
 
   protected Error(long cPtr, boolean cMemoryOwn) {

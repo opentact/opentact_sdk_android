@@ -1,7 +1,5 @@
 package com.yht.opentact.sip;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.pjsip.pjsua2.Account;
 import org.pjsip.pjsua2.AccountConfig;
 import org.pjsip.pjsua2.AccountInfo;
@@ -10,14 +8,6 @@ import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.OnIncomingCallParam;
 import org.pjsip.pjsua2.OnRegStateParam;
 import org.pjsip.pjsua2.pjsip_status_code;
-
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-
-import com.yht.opentact.api.OpentactManager;
-import com.yht.opentact.util.HttpService;
-import com.yht.opentact.util.HttpService.OnMessageResponseListener;
 
 
 public class SipAccount extends Account{

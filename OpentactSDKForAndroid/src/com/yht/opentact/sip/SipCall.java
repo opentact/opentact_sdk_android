@@ -1,7 +1,5 @@
 package com.yht.opentact.sip;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.pjsip.pjsua2.AudioMedia;
 import org.pjsip.pjsua2.Call;
 import org.pjsip.pjsua2.CallInfo;
@@ -13,10 +11,6 @@ import org.pjsip.pjsua2.OnCallStateParam;
 import org.pjsip.pjsua2.pjmedia_type;
 import org.pjsip.pjsua2.pjsip_inv_state;
 import org.pjsip.pjsua2.pjsua_call_media_status;
-
-import com.yht.opentact.api.OpentactManager;
-import com.yht.opentact.util.HttpService;
-import com.yht.opentact.util.HttpService.OnMessageResponseListener;
 
 public class SipCall extends Call{
 

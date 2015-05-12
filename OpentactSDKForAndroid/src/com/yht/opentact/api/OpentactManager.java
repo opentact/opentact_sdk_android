@@ -1,20 +1,16 @@
 package com.yht.opentact.api;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 
 import com.yht.opentact.im.IMService;
 import com.yht.opentact.im.callback.IMCallback;
-import com.yht.opentact.sip.NativeLibManager;
 import com.yht.opentact.sip.SipService;
 import com.yht.opentact.sip.callback.OnSipCallback;
 
 public class OpentactManager {
 
-	private final static String META_DATA_SID = "OPENTACT_APPKEY";
-	private final static String META_DATA_AUTHTOKEN = "OPENTACT_AUTHTOKEN";
+//	private final static String META_DATA_SID = "OPENTACT_APPKEY";
+//	private final static String META_DATA_AUTHTOKEN = "OPENTACT_AUTHTOKEN";
 	
     private static OpentactManager instance = new OpentactManager();	
     private SipService sipService;

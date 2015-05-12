@@ -1,13 +1,10 @@
 package com.yht.opentact.sip;
 
-import java.util.Map;
 
-import org.json.JSONObject;
 import org.pjsip.pjsua2.AccountConfig;
 import org.pjsip.pjsua2.AuthCredInfo;
 import org.pjsip.pjsua2.CallOpParam;
 import org.pjsip.pjsua2.CallSetting;
-import org.pjsip.pjsua2.CodecInfoVector;
 import org.pjsip.pjsua2.EpConfig;
 import org.pjsip.pjsua2.LogConfig;
 import org.pjsip.pjsua2.StringVector;
@@ -19,10 +16,8 @@ import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsip_transport_type_e;
 import org.pjsip.pjsua2.pjsua_state;
 
-import com.yht.opentact.api.OpentactManager;
 import com.yht.opentact.sip.callback.OnSipCallback;
 import com.yht.opentact.util.HttpService;
-import com.yht.opentact.util.HttpService.OnMessageResponseListener;
 import com.yht.opentact.util.LogWriterUtils;
 
 import android.util.Log;
