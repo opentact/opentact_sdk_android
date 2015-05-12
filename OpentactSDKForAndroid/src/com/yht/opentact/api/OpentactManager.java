@@ -1,6 +1,9 @@
 package com.yht.opentact.api;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 
 import com.yht.opentact.im.IMService;
 import com.yht.opentact.im.callback.IMCallback;
@@ -10,7 +13,10 @@ import com.yht.opentact.sip.callback.OnSipCallback;
 
 public class OpentactManager {
 
-    private static OpentactManager instance;	
+	private final static String META_DATA_SID = "OPENTACT_APPKEY";
+	private final static String META_DATA_AUTHTOKEN = "OPENTACT_AUTHTOKEN";
+	
+    private static OpentactManager instance = new OpentactManager();	
     private SipService sipService;
     private IMService imService;
     public static Context APP_CONTEXT;
@@ -19,17 +25,16 @@ public class OpentactManager {
     public static String ACCOUNT_AUTHTOKEN;
 
 
-    public static OpentactManager startWork(Context ctx,String sid,String authToken,String ssid,OpentactConfig opentactConfig,OnSipCallback sipCallback) {
+    
+    public void startWork(Context ctx,String sid,String authToken,String ssid,OpentactConfig opentactConfig,OnSipCallback sipCallback) {
 
         if(sid == null || authToken == null)
-            return null;
+            return;
         
         APP_CONTEXT = ctx;
         ACCOUNT_SID = sid;
         ACCOUNT_AUTHTOKEN = authToken;
         ACCOUNT_SSID = ssid;
-
-        //连网验证sid 及 token 是否有效
 
         OpentactConfig cfgDefault = opentactConfig;
         if(cfgDefault == null){
@@ -40,7 +45,7 @@ public class OpentactManager {
         //initialize sip
         if(cfgDefault.isEnableSip()){
             if(!sipService1.sipStart(opentactConfig.getSipConfig(),sipCallback)){
-                return null;
+                return;
             }
 
         }
@@ -51,8 +56,8 @@ public class OpentactManager {
             imService.imStart(opentactConfig.getImConfig());
         }
 
-        instance = new OpentactManager(sipService1,imService);
-        return instance;    
+        this.sipService = sipService1;
+        this.imService = imService;
     }
 
     public static OpentactManager getInstance(){
@@ -131,5 +136,18 @@ public class OpentactManager {
     public void imSubscribe(IMCallback callback){
     	this.imService.subscribe(callback);
     }
+    
+//    private String getMetaValue(Context ctx,String key){
+//    	String value = null;
+//    	try {
+//			ApplicationInfo ai = ctx.getPackageManager().getApplicationInfo(ctx.getPackageName(), PackageManager.GET_META_DATA);
+//			if(ai != null){
+//				value = ai.metaData.getString(key);
+//			}
+//		} catch (NameNotFoundException e) {
+//			e.printStackTrace();
+//		}
+//    	return value;
+//    }
     
 }

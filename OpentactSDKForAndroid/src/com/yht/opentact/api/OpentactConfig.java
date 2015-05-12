@@ -7,7 +7,7 @@ public class OpentactConfig {
 	private IMConfig imConfig = new IMConfig();
     private SipConfig sipConfig = new SipConfig();
     private boolean enableSip = true;
-    private boolean enableIm = true;
+    private boolean enableIm = false;
 
     public OpentactConfig(){
 
