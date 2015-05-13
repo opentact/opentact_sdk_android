@@ -16,8 +16,8 @@ import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsip_transport_type_e;
 import org.pjsip.pjsua2.pjsua_state;
 
+import com.yht.opentact.cloud.HttpService;
 import com.yht.opentact.sip.callback.OnSipCallback;
-import com.yht.opentact.util.HttpService;
 import com.yht.opentact.util.LogWriterUtils;
 
 import android.util.Log;

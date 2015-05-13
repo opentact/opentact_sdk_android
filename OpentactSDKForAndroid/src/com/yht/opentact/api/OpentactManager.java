@@ -5,64 +5,26 @@ import android.content.Context;
 import com.yht.opentact.im.IMService;
 import com.yht.opentact.im.callback.IMCallback;
 import com.yht.opentact.sip.SipService;
-import com.yht.opentact.sip.callback.OnSipCallback;
 
 public class OpentactManager {
 
-//	private final static String META_DATA_SID = "OPENTACT_APPKEY";
-//	private final static String META_DATA_AUTHTOKEN = "OPENTACT_AUTHTOKEN";
-	
     private static OpentactManager instance = new OpentactManager();	
     private SipService sipService;
     private IMService imService;
-    public static Context APP_CONTEXT;
-    public static String ACCOUNT_SID;
-    public static String ACCOUNT_SSID;
-    public static String ACCOUNT_AUTHTOKEN;
+    public static Context appContext;
 
-
-    
-    public void startWork(Context ctx,String sid,String authToken,String ssid,OpentactConfig opentactConfig,OnSipCallback sipCallback) {
-
-        if(sid == null || authToken == null)
-            return;
-        
-        APP_CONTEXT = ctx;
-        ACCOUNT_SID = sid;
-        ACCOUNT_AUTHTOKEN = authToken;
-        ACCOUNT_SSID = ssid;
-
-        OpentactConfig cfgDefault = opentactConfig;
-        if(cfgDefault == null){
-            cfgDefault = new OpentactConfig();
-        }
-
-        //initialize sip
-        if(cfgDefault.isEnableSip()){
-        	SipService sipService1 = SipService.getInstance();
-            if(!sipService1.sipStart(opentactConfig.getSipConfig(),sipCallback)){
-                return;
-            }
-            this.sipService = sipService1;
-        }
-
-        //initialize im
-        if(cfgDefault.isEnableIm()){
-        	IMService imService = IMService.getInstance();
-            imService.imStart(opentactConfig.getImConfig());
-            this.imService = imService;
-        }
+    public void init(Context ctx){
+    	if(appContext == null){
+    		appContext = ctx;
+    	}
+    	this.sipService = SipService.getInstance();
+    	this.imService = IMService.getInstance();
     }
-
+    
     public static OpentactManager getInstance(){
     	return instance;
     }
 
-    private OpentactManager(SipService ss,IMService is){
-        this.sipService = ss;
-        this.imService = is;
-    }
-    
     private OpentactManager(){
     	
     }

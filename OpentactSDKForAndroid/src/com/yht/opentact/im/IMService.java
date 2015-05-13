@@ -4,7 +4,7 @@ import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
-import com.yht.opentact.api.OpentactManager;
+import com.yht.opentact.api.OpentactConfig;
 import com.yht.opentact.im.callback.IMCallback;
 
 
@@ -15,8 +15,8 @@ public class IMService {
 	public static final String OPENTACT = "opentact";
     public static final String SPRIT = "/";
 
-    private MqttAndroidClient mqttAndroidClient;
-    private MqttConnectOptions mqttConnectOptions;
+    private MqttAndroidClient mqttAndroidClient = null;
+    private MqttConnectOptions mqttConnectOptions = null;
     private IMConfig imCfg;
     private IMCallback imCallback;
 
@@ -31,12 +31,13 @@ public class IMService {
     public void imStart(IMConfig cfg){
     	this.imCfg = cfg;
         String uri = "tcp://"+IMConstants.HOST+":"+IMConstants.PORT;
-        mqttAndroidClient = new MqttAndroidClient(OpentactManager.APP_CONTEXT,uri,OpentactManager.ACCOUNT_SSID);
+        mqttAndroidClient = new MqttAndroidClient(OpentactConfig.getInstance().getAppContext(),uri,OpentactConfig.getInstance().getSsid());
+        System.out.println("初始化mqttAndroidClient");
     }
 
     public void imDisconnect(IMCallback callback){
     	try {
-			mqttAndroidClient.disconnect(OpentactManager.APP_CONTEXT, callback);
+			mqttAndroidClient.disconnect(OpentactConfig.getInstance().getAppContext(), callback);
 		} catch (MqttException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -48,8 +49,8 @@ public class IMService {
             imCfg = new IMConfig();
         try {
             mqttConnectOptions = new MqttConnectOptions();
-            mqttConnectOptions.setUserName(OpentactManager.ACCOUNT_SSID);
-            mqttConnectOptions.setPassword(OpentactManager.ACCOUNT_AUTHTOKEN.toCharArray());
+            mqttConnectOptions.setUserName(OpentactConfig.getInstance().getSsid());
+            mqttConnectOptions.setPassword(OpentactConfig.getInstance().getAuthtoken().toCharArray());
             mqttConnectOptions.setKeepAliveInterval(imCfg.getKeepAliveInterval());
             mqttConnectOptions.setCleanSession(imCfg.isCleanSession());
             mqttConnectOptions.setConnectionTimeout(imCfg.getConnectionTimeout());
@@ -76,7 +77,7 @@ public class IMService {
         	this.imCallback = callback;
         mqttAndroidClient.setCallback(callback);
         try {
-        	mqttAndroidClient.subscribe(buildTopic(OpentactManager.ACCOUNT_SSID), imCfg.getQos(), null, callback);
+        	mqttAndroidClient.subscribe(buildTopic(OpentactConfig.getInstance().getSsid()), imCfg.getQos(), null, callback);
         } catch (MqttException e) {
             e.printStackTrace();
         }
@@ -84,7 +85,7 @@ public class IMService {
 
     private String buildTopic(String ssid){
         StringBuffer topic = new StringBuffer();
-        topic.append(OPENTACT).append(SPRIT).append(OpentactManager.ACCOUNT_SID).append(SPRIT)
+        topic.append(OPENTACT).append(SPRIT).append(OpentactConfig.getInstance().getSid()).append(SPRIT)
                 .append(ssid);
         return topic.toString().trim();
     }
