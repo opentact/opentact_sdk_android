@@ -37,23 +37,21 @@ public class OpentactManager {
             cfgDefault = new OpentactConfig();
         }
 
-        SipService sipService1 = SipService.getInstance();
         //initialize sip
         if(cfgDefault.isEnableSip()){
+        	SipService sipService1 = SipService.getInstance();
             if(!sipService1.sipStart(opentactConfig.getSipConfig(),sipCallback)){
                 return;
             }
-
+            this.sipService = sipService1;
         }
 
         //initialize im
-        IMService imService = IMService.getInstance();
         if(cfgDefault.isEnableIm()){
+        	IMService imService = IMService.getInstance();
             imService.imStart(opentactConfig.getImConfig());
+            this.imService = imService;
         }
-
-        this.sipService = sipService1;
-        this.imService = imService;
     }
 
     public static OpentactManager getInstance(){
