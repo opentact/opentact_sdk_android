@@ -12,13 +12,18 @@ public class OpentactManager {
     private SipService sipService;
     private IMService imService;
     public static Context appContext;
+    public boolean isCreated = false;
 
     public void init(Context ctx){
+    	if(isCreated){
+    		return;
+    	}
     	if(appContext == null){
     		appContext = ctx;
     	}
     	this.sipService = SipService.getInstance();
     	this.imService = IMService.getInstance();
+    	isCreated = true;
     }
     
     public static OpentactManager getInstance(){
