@@ -2,6 +2,7 @@ package com.yht.opentact.cloud;
 
 import org.apache.http.Header;
 import org.json.JSONObject;
+
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -135,22 +136,40 @@ public class HttpService {
 		uri.append(HTTPS).append(OPENTACT_HTTPS_SERVER_URI).append(SYMBOLS_SOLIDUS).append(OPENTACT_HTTPS_SERVER_VERSION).append(SYMBOLS_SOLIDUS).append(REQUEST_ACTION_FRIENDS)
 				.append(SYMBOLS_SOLIDUS).append(ssid).append(SYMBOLS_POINT).append(RESPONSE_DATA_TYPE_JSON);
 		Log.d(TAG, "request uri = " + uri.toString());
-		client.setBasicAuth(sid, authToken);
-		client.get(uri.toString(), new JsonHttpResponseHandler() {
-
+//		client.setBasicAuth(sid, authToken);
+//		client.get(uri.toString(), new JsonHttpResponseHandler() {
+//
+//			@Override
+//			public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+//				onMessageResponseListener.messageResponse(response);
+//				Log.d(TAG, "jsonResponse = " + response.toString());
+//			}
+//
+//			@Override
+//			public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+//				onMessageResponseListener.errorCode(statusCode);
+//				Log.d(TAG, "https error code = " + statusCode);
+//			}
+//
+//		});
+		HttpClientService httpClient = new HttpClientService(true, 5060, 443);
+		httpClient.setBasicAuth(sid, authToken);
+		httpClient.get(uri.toString(), new HttpResponseCallback(){
 			@Override
-			public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-				onMessageResponseListener.messageResponse(response);
-				Log.d(TAG, "jsonResponse = " + response.toString());
+			public void onSuccess(int statusCode, JSONObject jsonMsg) {
+				super.onSuccess(statusCode, jsonMsg);
+				onMessageResponseListener.messageResponse(jsonMsg);
+				Log.d(TAG, "jsonResponse = " + jsonMsg.toString());
 			}
-
+			
 			@Override
-			public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-				onMessageResponseListener.errorCode(statusCode);
-				Log.d(TAG, "https error code = " + statusCode);
+			public void onFailure(int statusCode, Throwable throwable, JSONObject jsonObject) {
+				super.onFailure(statusCode, throwable, jsonObject);
+				onFailure(statusCode, throwable, jsonObject);
+				Log.d(TAG, "jsonResponse = " + jsonObject.toString());
 			}
-
 		});
+		
 	}
 
 	public void getSipAccount(String sid, String authToken, String ssid, OnMessageResponseListener l) {
