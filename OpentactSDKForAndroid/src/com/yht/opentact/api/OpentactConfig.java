@@ -6,7 +6,7 @@ import com.yht.opentact.im.IMConfig;
 import com.yht.opentact.sip.SipConfig;
 
 public class OpentactConfig {
-	private static OpentactConfig instance = new OpentactConfig();
+	private static OpentactConfig instance = null;
 	private IMConfig imConfig = new IMConfig();
     private SipConfig sipConfig = new SipConfig();
     private boolean enableSip = true;

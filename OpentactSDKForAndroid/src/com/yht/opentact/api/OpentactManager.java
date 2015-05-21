@@ -1,5 +1,7 @@
 package com.yht.opentact.api;
 
+import org.json.JSONObject;
+
 import android.content.Context;
 
 import com.yht.opentact.im.IMService;
@@ -21,8 +23,12 @@ public class OpentactManager {
     	if(appContext == null){
     		appContext = ctx;
     	}
-    	this.sipService = SipService.getInstance();
-    	this.imService = IMService.getInstance();
+    	if(OpentactConfig.getInstance().isEnableIm()){
+    		this.imService = IMService.getInstance();
+    	}
+    	if(OpentactConfig.getInstance().isEnableSip()){
+    		this.sipService = SipService.getInstance();
+    	}
     	isCreated = true;
     }
     
@@ -97,18 +103,5 @@ public class OpentactManager {
     public void imSubscribe(IMCallback callback){
     	this.imService.subscribe(callback);
     }
-    
-//    private String getMetaValue(Context ctx,String key){
-//    	String value = null;
-//    	try {
-//			ApplicationInfo ai = ctx.getPackageManager().getApplicationInfo(ctx.getPackageName(), PackageManager.GET_META_DATA);
-//			if(ai != null){
-//				value = ai.metaData.getString(key);
-//			}
-//		} catch (NameNotFoundException e) {
-//			e.printStackTrace();
-//		}
-//    	return value;
-//    }
     
 }
