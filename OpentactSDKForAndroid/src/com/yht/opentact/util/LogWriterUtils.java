@@ -3,13 +3,15 @@ package com.yht.opentact.util;
 import org.pjsip.pjsua2.LogEntry;
 import org.pjsip.pjsua2.LogWriter;
 
+import com.yht.opentact.debug.OLog;
+
 import android.util.Log;
 
 public class LogWriterUtils extends LogWriter{
 
 	@Override
 	public void write(LogEntry entry) {
-		Log.d("opentact log", entry.getMsg());
+		OLog.d("opentact log", entry.getMsg());
 		printLog(entry.getMsg());
 	}
 

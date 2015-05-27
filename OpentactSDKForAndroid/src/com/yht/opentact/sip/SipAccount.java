@@ -37,12 +37,12 @@ public class SipAccount extends Account{
     @Override
     public void onIncomingCall(OnIncomingCallParam prm) {
     	SipCall call = new SipCall(this,prm.getCallId());
-    	if(SipService.currentCall != null){
+    	if(SipService.getInstance().currentCall != null){
     		call.delete();
     		return;
     	}
     	else{
-    		SipService.currentCall = call;
+    		SipService.getInstance().currentCall = call;
     	}
 		CallOpParam cop = new CallOpParam();
     	cop.setStatusCode(pjsip_status_code.PJSIP_SC_RINGING);

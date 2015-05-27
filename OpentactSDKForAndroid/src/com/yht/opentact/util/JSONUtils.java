@@ -17,6 +17,7 @@ import org.json.JSONObject;
 public class JSONUtils {
 
     public static boolean isPrintException = true;
+    
 
     /**
      * get Long from jsonObject
@@ -536,6 +537,31 @@ public class JSONUtils {
             return defaultValue;
         }
     }
+    
+    /**
+     * get JSONObject from jsonData
+     * @param jsonData
+     * @param defaultValue
+     * @return <ul>
+     *         <li>if jsonData is null, return defaultValue</li>
+     *         <li>if jsonData {@link org.json.JSONObject#JSONObject(String)} exception, return defaultValue</li>
+     *         </ul>
+     */
+    public static JSONObject getJSONObject(String jsonData,JSONObject defaultValue){
+    	if(jsonData == null){
+    		return defaultValue;
+    	}
+    	
+    	try {
+			JSONObject jsonObject = new JSONObject(jsonData);
+			return jsonObject;
+		} catch (JSONException e) {
+			if (isPrintException) {
+                e.printStackTrace();
+            }
+			return defaultValue;
+		}
+    }
 
     /**
      * get JSONObject from jsonObject
@@ -641,6 +667,31 @@ public class JSONUtils {
         try {
             JSONObject jsonObject = new JSONObject(jsonData);
             return getJSONArray(jsonObject, key, defaultValue);
+        } catch (JSONException e) {
+            if (isPrintException) {
+                e.printStackTrace();
+            }
+            return defaultValue;
+        }
+    }
+    
+    /**
+     * get JSONArray from jsonData
+     * @param jsonData
+     * @param defaultValue
+     * @return  <ul>
+     *         <li>if jsonData is null, return defaultValue</li>
+     *         <li>if jsonData {@link org.json.JSONObject#JSONObject(String)} exception, return defaultValue</li>
+     *         </ul>
+     */
+    public static JSONArray getJSONArray(String jsonData,JSONArray defaultValue){
+    	if (jsonData == null) {
+            return defaultValue;
+        }
+
+        try {
+            JSONArray jsonArray = new JSONArray(jsonData);
+            return jsonArray;
         } catch (JSONException e) {
             if (isPrintException) {
                 e.printStackTrace();

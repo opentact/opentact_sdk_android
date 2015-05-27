@@ -31,7 +31,7 @@ public class SipService {
 	public static final String TAG = SipService.class.getSimpleName();
 
 	private static SipService instance = new SipService();
-	public static SipCall currentCall;
+	public SipCall currentCall = null;
 	private SipEndpoint ep = new SipEndpoint();
 	private SipAccount acc;
 	private EpConfig ep_cfg = new EpConfig();
@@ -117,7 +117,7 @@ public class SipService {
 
 		}
 		created = true;
-		setCodecsPriorityByDefault();;
+		setCodecsPriorityByDefault();
 		return true;
 	}
 

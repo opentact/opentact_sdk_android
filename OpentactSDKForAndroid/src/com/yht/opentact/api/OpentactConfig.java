@@ -15,7 +15,6 @@ public class OpentactConfig {
 	private String authtoken = null;
 	private String ssid = null;
 	private Context appContext = null;
-	private boolean debugMode = false;
     
 
     private OpentactConfig(){
@@ -93,14 +92,4 @@ public class OpentactConfig {
 		this.appContext = appContext;
 	}
 
-	public boolean isDebugMode() {
-		return debugMode;
-	}
-
-	public void setDebugMode(boolean debugMode) {
-		this.debugMode = debugMode;
-	}
-    
-	
-    
 }
