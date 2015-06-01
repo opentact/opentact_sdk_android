@@ -7,6 +7,8 @@ public class SipConfig {
     private boolean iceEnable = true;
     private boolean stunEnable = true;
     private boolean debugModel = true;
+    private boolean oneWorkThread = true;
+    private boolean mainThreadOnly = false;
 
     public boolean isTurnEnable() {
         return turnEnable;
@@ -39,4 +41,20 @@ public class SipConfig {
     public void setDebugModel(boolean debugModel) {
         this.debugModel = debugModel;
     }
+
+	public boolean isOneWorkThread() {
+		return oneWorkThread;
+	}
+
+	public void setOneWorkThread(boolean oneWorkThread) {
+		this.oneWorkThread = oneWorkThread;
+	}
+
+	public boolean isMainThreadOnly() {
+		return mainThreadOnly;
+	}
+
+	public void setMainThreadOnly(boolean mainThreadOnly) {
+		this.mainThreadOnly = mainThreadOnly;
+	}
 }

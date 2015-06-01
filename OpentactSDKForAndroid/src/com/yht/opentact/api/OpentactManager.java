@@ -1,6 +1,5 @@
 package com.yht.opentact.api;
 
-import org.json.JSONObject;
 
 import android.content.Context;
 

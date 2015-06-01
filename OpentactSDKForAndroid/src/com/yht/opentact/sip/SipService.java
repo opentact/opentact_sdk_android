@@ -1,6 +1,5 @@
 package com.yht.opentact.sip;
 
-
 import org.pjsip.pjsua2.AccountConfig;
 import org.pjsip.pjsua2.AuthCredInfo;
 import org.pjsip.pjsua2.CallOpParam;
@@ -17,6 +16,8 @@ import org.pjsip.pjsua2.pjsip_transport_type_e;
 import org.pjsip.pjsua2.pjsua_state;
 
 import com.yht.opentact.cloud.HttpService;
+import com.yht.opentact.debug.OLog;
+import com.yht.opentact.exception.SameThreadException;
 import com.yht.opentact.sip.callback.OnSipCallback;
 import com.yht.opentact.util.LogWriterUtils;
 
@@ -24,22 +25,24 @@ import android.util.Log;
 
 public class SipService {
 
-	static {
-		System.loadLibrary(NativeLibManager.PJSUA2_LIB_NAME);
-	}
+	// static {
+	// System.loadLibrary(NativeLibManager.PJSUA2_LIB_NAME);
+	// }
 
 	public static final String TAG = SipService.class.getSimpleName();
 
 	private static SipService instance = new SipService();
 	public SipCall currentCall = null;
-	private SipEndpoint ep = new SipEndpoint();
+	private SipEndpoint ep = null;
 	private SipAccount acc;
-	private EpConfig ep_cfg = new EpConfig();
-	private TransportConfig tcfg = new TransportConfig();
-	private AccountConfig acc_cfg = new AccountConfig();
+	private EpConfig ep_cfg = null;
+	private TransportConfig tcfg = null;
+	private AccountConfig acc_cfg = null;
 	private LogWriterUtils logWriterUtil;
-	private SipConfig sipConfig = new SipConfig();
-	private SipCall sipCall;
+	private SipConfig sipConfig = null;
+	private SipCall sipCall = null;
+	private boolean hasSipStack = false;
+	private boolean sipStackIsCorrupted = false;
 
 	private boolean created = false;
 
@@ -47,6 +50,29 @@ public class SipService {
 
 	private SipService() {
 
+	}
+
+	public boolean tryToLoadStack() {
+		if (hasSipStack) {
+			return true;
+		}
+
+		if (!sipStackIsCorrupted) {
+			try {
+				System.loadLibrary(NativeLibManager.PJSUA2_LIB_NAME);
+				hasSipStack = true;
+				return true;
+			} catch (UnsatisfiedLinkError e) {
+				// If it fails we probably are running on a special hardware
+				OLog.e(TAG, "We have a problem with the current stack.... NOT YET Implemented", e);
+				hasSipStack = false;
+				sipStackIsCorrupted = true;
+				return false;
+			} catch (Exception e) {
+				Log.e(TAG, "We have a problem with the current stack....", e);
+			}
+		}
+		return false;
 	}
 
 	public boolean isCreated() {
@@ -57,7 +83,16 @@ public class SipService {
 		return instance;
 	}
 
-	public boolean sipStart(SipConfig cfg, OnSipCallback callback) {
+	public boolean sipStart(SipConfig cfg, OnSipCallback callback) throws SameThreadException{
+		if (!hasSipStack) {
+			tryToLoadStack();
+		}
+		ep = new SipEndpoint();
+		ep_cfg = new EpConfig();
+		tcfg = new TransportConfig();
+		acc_cfg = new AccountConfig();
+		sipConfig = new SipConfig();
+
 		if (cfg != null) {
 			sipConfig = cfg;
 		}
@@ -77,6 +112,16 @@ public class SipService {
 					ep_cfg.getUaConfig().setMaxCalls(4);
 					ep_cfg.getMedConfig().setClockRate(16000);
 					ep_cfg.getLogConfig().setLevel(5);
+
+					if (sipConfig.isOneWorkThread() && !sipConfig.isMainThreadOnly()) {
+						ep_cfg.getUaConfig().setThreadCnt(1);
+					}
+					
+					if(sipConfig.isMainThreadOnly() && !sipConfig.isOneWorkThread()){
+						ep.libHandleEvents(5000);
+						ep_cfg.getUaConfig().setThreadCnt(0);
+						ep_cfg.getUaConfig().setMainThreadOnly(sipConfig.isMainThreadOnly());
+					}
 
 					// LOG CONFIG
 					if (sipConfig.isDebugModel()) {
@@ -135,18 +180,17 @@ public class SipService {
 		}
 	}
 
-	public void setCodecPriority(String codecID,short priority,boolean isDefault) {
-			try {
-				if(isDefault){
-					ep.codecSetPriority(codecID, (short)0);
-				}
-				else{
-					ep.codecSetPriority(codecID, priority);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
+	public void setCodecPriority(String codecID, short priority, boolean isDefault) {
+		try {
+			if (isDefault) {
+				ep.codecSetPriority(codecID, (short) 0);
+			} else {
+				ep.codecSetPriority(codecID, priority);
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+	}
 
 	public String[] getCodecList() {
 		try {
@@ -264,6 +308,7 @@ public class SipService {
 			prm.setStatusCode(pjsip_status_code.PJSIP_SC_DECLINE);
 			try {
 				currentCall.hangup(prm);
+				currentCall = null;
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -272,6 +317,10 @@ public class SipService {
 
 	public void removeAccount() {
 
+	}
+
+	public void setCurrentCall(SipCall currentCall) {
+		this.currentCall = currentCall;
 	}
 
 	public SipEndpoint getEp() {

@@ -5,8 +5,6 @@ import org.pjsip.pjsua2.LogWriter;
 
 import com.yht.opentact.debug.OLog;
 
-import android.util.Log;
-
 public class LogWriterUtils extends LogWriter{
 
 	@Override
