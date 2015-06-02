@@ -18,6 +18,7 @@ import org.pjsip.pjsua2.pjsua_state;
 import com.yht.opentact.cloud.HttpService;
 import com.yht.opentact.debug.OLog;
 import com.yht.opentact.exception.SameThreadException;
+import com.yht.opentact.sip.callback.OnHungupCallListener;
 import com.yht.opentact.sip.callback.OnSipCallback;
 import com.yht.opentact.util.LogWriterUtils;
 
@@ -34,7 +35,7 @@ public class SipService {
 	private static SipService instance = new SipService();
 	public SipCall currentCall = null;
 	private SipEndpoint ep = null;
-	private SipAccount acc;
+	private SipAccount acc = null;
 	private EpConfig ep_cfg = null;
 	private TransportConfig tcfg = null;
 	private AccountConfig acc_cfg = null;
@@ -45,6 +46,16 @@ public class SipService {
 	private boolean sipStackIsCorrupted = false;
 
 	private boolean created = false;
+
+	static class ListenerInfo {
+		public OnIncomingCallListener onIncomingCallListener;
+		public OnAnswerCallListener onAnswerCallListener;
+		public OnCallingListener onCallingListener;
+		public OnAccountRegisterStateListener onAccountRegisterStateListener;
+	}
+	public static OnHungupCallListener onHungupCallListener;
+
+	public ListenerInfo mListenerInfo;
 
 	public static OnSipCallback onSipCallback;
 
@@ -83,7 +94,7 @@ public class SipService {
 		return instance;
 	}
 
-	public boolean sipStart(SipConfig cfg, OnSipCallback callback) throws SameThreadException{
+	public boolean sipStart(SipConfig cfg, OnSipCallback callback) throws SameThreadException {
 		if (!hasSipStack) {
 			tryToLoadStack();
 		}
@@ -93,6 +104,10 @@ public class SipService {
 		acc_cfg = new AccountConfig();
 		sipConfig = new SipConfig();
 
+		if(mListenerInfo == null){
+			mListenerInfo = new ListenerInfo();
+		}
+		
 		if (cfg != null) {
 			sipConfig = cfg;
 		}
@@ -116,8 +131,8 @@ public class SipService {
 					if (sipConfig.isOneWorkThread() && !sipConfig.isMainThreadOnly()) {
 						ep_cfg.getUaConfig().setThreadCnt(1);
 					}
-					
-					if(sipConfig.isMainThreadOnly() && !sipConfig.isOneWorkThread()){
+
+					if (sipConfig.isMainThreadOnly() && !sipConfig.isOneWorkThread()) {
 						ep.libHandleEvents(5000);
 						ep_cfg.getUaConfig().setThreadCnt(0);
 						ep_cfg.getUaConfig().setMainThreadOnly(sipConfig.isMainThreadOnly());
@@ -319,6 +334,30 @@ public class SipService {
 
 	}
 
+	public boolean getAccountStatus() {
+		if (this.acc == null) {
+			return false;
+		}
+		try {
+			return acc.getInfo().getOnlineStatus();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public String getAccountStatusString() {
+		if (this.acc == null) {
+			return null;
+		}
+		try {
+			return acc.getInfo().getOnlineStatusText();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public void setCurrentCall(SipCall currentCall) {
 		this.currentCall = currentCall;
 	}
@@ -329,6 +368,58 @@ public class SipService {
 
 	public void setEp(SipEndpoint ep) {
 		this.ep = ep;
+	}
+
+	public ListenerInfo getListenerInfo() {
+		if (mListenerInfo != null) {
+			return mListenerInfo;
+		}
+		mListenerInfo = new ListenerInfo();
+		return mListenerInfo;
+	}
+
+	public void setOnIncomingCallListener(OnIncomingCallListener l) {
+		getListenerInfo().onIncomingCallListener = l;
+	}
+
+	public void setOnAnswerCallListener(OnAnswerCallListener l) {
+		getListenerInfo().onAnswerCallListener = l;
+	}
+
+	public void setOnHungupCallListener(OnHungupCallListener l) {
+		onHungupCallListener = l;
+	}
+
+	public void setOnAccountRegisterStateListener(OnAccountRegisterStateListener l) {
+		getListenerInfo().onAccountRegisterStateListener = l;
+	}
+
+	public void setOnCallingListener(OnCallingListener l) {
+		getListenerInfo().onCallingListener = l;
+	}
+
+	public interface OnAccountRegisterStateListener {
+
+		abstract void onAccountRegisterStateListener(boolean isActive);
+
+	}
+
+	public interface OnAnswerCallListener {
+
+		abstract void onAnswerCallListener();
+
+	}
+
+	public interface OnCallingListener {
+
+		abstract void onCallingListener();
+
+	}
+
+	public interface OnIncomingCallListener {
+
+		abstract void onIncomingCallListener(String sid);
+
 	}
 
 }

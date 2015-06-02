@@ -6,6 +6,8 @@ import android.content.Context;
 import com.yht.opentact.im.IMService;
 import com.yht.opentact.im.callback.IMCallback;
 import com.yht.opentact.sip.SipService;
+import com.yht.opentact.sip.SipService.OnCallingListener;
+import com.yht.opentact.sip.callback.OnHungupCallListener;
 
 public class OpentactManager {
 
@@ -47,18 +49,6 @@ public class OpentactManager {
     	sipService.sipStop();
     }
 
-    public SipService getSipService() {
-        return sipService;
-    }
-
-    public void setSipService(SipService sipService) {
-        this.sipService = sipService;
-    }
-
-    public IMService getImService() {
-        return imService;
-    }
-
     public void answerCall(){
     	this.sipService.answer();
     }
@@ -91,6 +81,10 @@ public class OpentactManager {
     	this.sipService.addAccount(username, password);
     }
     
+    public void clearCurrentSipCall(){
+    	this.sipService.setCurrentCall(null);
+    }
+    
     public void imDoConnect(IMCallback callback){
     	this.imService.doConnect(callback);
     }
@@ -103,4 +97,19 @@ public class OpentactManager {
     	this.imService.subscribe(callback);
     }
     
+    public boolean getSipAccountOnlineStatus(){
+    	return this.sipService.getAccountStatus();
+    }
+    
+    public String getSipAccountOnlineStatusString(){
+    	return this.sipService.getAccountStatusString();
+    }
+    
+    public void setOnHungupCallListener(OnHungupCallListener l){
+    	this.sipService.setOnHungupCallListener(l);
+    }
+    
+    public void setOnCallingListener(OnCallingListener l){
+    	this.sipService.setOnCallingListener(l);
+    }
 }

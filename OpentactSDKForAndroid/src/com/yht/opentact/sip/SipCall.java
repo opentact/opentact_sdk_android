@@ -63,9 +63,38 @@ public class SipCall extends Call {
 		 */
 		try {
 			CallInfo ci = getInfo();
-			SipService.onSipCallback.onCallStateListener(callStateMap.get(ci.getState()));
-			if (ci.getState() == pjsip_inv_state.PJSIP_INV_STATE_DISCONNECTED) {
+//			SipService.onSipCallback.onCallStateListener(callStateMap.get(ci.getState()));
+			switch (callStateMap.get(ci.getState())) {
+			case CALLING:
+				System.out.println("call state >>>>>>>>>>>>>>>>>CALLING");
+				SipService.getInstance().getListenerInfo().onCallingListener.onCallingListener();
+				break;
+
+			case DISCONNECTED:
+				System.out.println("call state >>>>>>>>>>>>>>>>>DISCONNECTED");
+				SipService.onHungupCallListener.onHungupCallListener(true);
 				this.delete();
+				break;
+				
+			case CONFIRMED:
+				
+				break;
+				
+			case CONNECTING:
+				
+				break;
+				
+			case INCOMING:
+				
+				break;
+				
+			case EARLY:
+				
+				break;
+				
+			case NULL:
+				
+				break;
 			}
 		} catch (Exception e) {
 			return;
