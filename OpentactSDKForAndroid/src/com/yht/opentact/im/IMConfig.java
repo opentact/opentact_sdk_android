@@ -1,12 +1,31 @@
 package com.yht.opentact.im;
 
-
+/**
+ * IM的基本配置信息
+ * @author weichao.yht
+ *
+ */
 public class IMConfig {
 	
+		/**
+		 * 心跳检查间距,默认20秒
+		 */
 	    private int keepAliveInterval = 20;
+	    /**
+	     * 是否清空回话,默认为false
+	     */
 	    private boolean isCleanSession = false;
+	    /**
+	     * 连接超时设置,默认为10秒
+	     */
 	    private int connectionTimeout = 10;
+	    /**
+	     * qos类型,默认为1
+	     */
 	    private int qos = 1;
+	    /**
+	     * 是否保留数据,默认为false
+	     */
 	    private boolean isRetained = false;
 	    
 

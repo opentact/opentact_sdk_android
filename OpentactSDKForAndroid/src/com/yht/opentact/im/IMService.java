@@ -7,9 +7,16 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import com.yht.opentact.api.OpentactConfig;
 import com.yht.opentact.im.callback.IMCallback;
 
-
+/**
+ * IM服务类,封装了IM的业务逻辑.
+ * @author weichao.yht
+ *
+ */
 public class IMService {
 
+	/**
+	 * 
+	 */
 	private static IMService instance = new IMService();
 	
 	public static final String OPENTACT = "opentact";

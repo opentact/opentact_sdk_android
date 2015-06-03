@@ -1,5 +1,10 @@
 package com.yht.opentact.api;
 
+/**
+ * Opentact常量类
+ * @author weichao.yht
+ *
+ */
 public class OpentactConstants {
 
 	// 测试用数据
