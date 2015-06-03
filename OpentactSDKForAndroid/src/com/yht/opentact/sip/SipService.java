@@ -15,7 +15,7 @@ import org.pjsip.pjsua2.pjsip_status_code;
 import org.pjsip.pjsua2.pjsip_transport_type_e;
 import org.pjsip.pjsua2.pjsua_state;
 
-import com.yht.opentact.cloud.HttpService;
+import com.yht.opentact.cloud.HttpConfig;
 import com.yht.opentact.debug.OLog;
 import com.yht.opentact.exception.SameThreadException;
 import com.yht.opentact.sip.callback.OnHungupCallListener;
@@ -24,6 +24,12 @@ import com.yht.opentact.util.LogWriterUtils;
 
 import android.util.Log;
 
+/**
+ * sip服务类,用于封装sip业务逻辑.这是一个单例类
+ * 
+ * @author weichao.yht
+ *
+ */
 public class SipService {
 
 	// static {
@@ -32,37 +38,94 @@ public class SipService {
 
 	public static final String TAG = SipService.class.getSimpleName();
 
+	/**
+	 * sip服务实例
+	 */
 	private static SipService instance = new SipService();
+	/**
+	 * 当前通话
+	 */
 	public SipCall currentCall = null;
+	/**
+	 * sip核心
+	 */
 	private SipEndpoint ep = null;
+	/**
+	 * sip账户
+	 */
 	private SipAccount acc = null;
+	/**
+	 * endpoint config
+	 */
 	private EpConfig ep_cfg = null;
+	/**
+	 * transport config
+	 */
 	private TransportConfig tcfg = null;
+	/**
+	 * account config
+	 */
 	private AccountConfig acc_cfg = null;
+	/**
+	 * 日志处理单元
+	 */
 	private LogWriterUtils logWriterUtil;
+	/**
+	 * sip config
+	 */
 	private SipConfig sipConfig = null;
+	/**
+	 * sip 通话
+	 */
 	private SipCall sipCall = null;
+	/**
+	 * sip线程启动标识
+	 */
 	private boolean hasSipStack = false;
+	/**
+	 * sip线程故障标识
+	 */
 	private boolean sipStackIsCorrupted = false;
-
+	/**
+	 * sip初始化标识
+	 */
 	private boolean created = false;
 
-	static class ListenerInfo {
-		public OnIncomingCallListener onIncomingCallListener;
-		public OnAnswerCallListener onAnswerCallListener;
-		public OnCallingListener onCallingListener;
-		public OnAccountRegisterStateListener onAccountRegisterStateListener;
-	}
+	/**
+	 * 设置一个监听器,监听来电状态
+	 */
+	public static OnIncomingCallListener onIncomingCallListener;
+	/**
+	 * 设置一个监听器,监听接通电话的状态
+	 */
+	public static OnAnswerCallListener onAnswerCallListener;
+	/**
+	 * 设置一个监听器,监听呼叫中的状态
+	 */
+	public static OnCallingListener onCallingListener;
+	/**
+	 * 设置一个监听器,监听sip账户注册的状态
+	 */
+	public static OnAccountRegisterStateListener onAccountRegisterStateListener;
+	/**
+	 * 设置一个监听器,监听挂断通话的状态
+	 */
 	public static OnHungupCallListener onHungupCallListener;
-
-	public ListenerInfo mListenerInfo;
-
+	/**
+	 * 设置一个同意sip监听器.用于监听sip过程的各种状态
+	 */
 	public static OnSipCallback onSipCallback;
 
 	private SipService() {
 
 	}
 
+	/**
+	 * 加载pjsip动态库,若已加载,则返回true.<br>
+	 * 加载成功,返回true.若加载动态库失败,则抛出UnsatisfiedLinkError异常.
+	 * 
+	 * @return
+	 */
 	public boolean tryToLoadStack() {
 		if (hasSipStack) {
 			return true;
@@ -90,10 +153,26 @@ public class SipService {
 		return created;
 	}
 
+	/**
+	 * 获取sip服务类实例
+	 * 
+	 * @return
+	 */
 	public static SipService getInstance() {
 		return instance;
 	}
 
+	/**
+	 * 启动sip服务
+	 * 
+	 * @param cfg
+	 *            加载sip配置
+	 * @param callback
+	 *            加载sip全局监听
+	 * @return 启动成功则返回true,启动失败则返回false.
+	 * @throws SameThreadException
+	 *             抛出线程异常
+	 */
 	public boolean sipStart(SipConfig cfg, OnSipCallback callback) throws SameThreadException {
 		if (!hasSipStack) {
 			tryToLoadStack();
@@ -104,10 +183,6 @@ public class SipService {
 		acc_cfg = new AccountConfig();
 		sipConfig = new SipConfig();
 
-		if(mListenerInfo == null){
-			mListenerInfo = new ListenerInfo();
-		}
-		
 		if (cfg != null) {
 			sipConfig = cfg;
 		}
@@ -181,6 +256,9 @@ public class SipService {
 		return true;
 	}
 
+	/**
+	 * 配置编码格式优先级.
+	 */
 	private void setCodecsPriorityByDefault() {
 		try {
 			ep.codecSetPriority(SipConstants.CODEC_ID.G722_16000, (short) 0);
@@ -195,6 +273,12 @@ public class SipService {
 		}
 	}
 
+	/**
+	 * 
+	 * @param codecID
+	 * @param priority
+	 * @param isDefault
+	 */
 	public void setCodecPriority(String codecID, short priority, boolean isDefault) {
 		try {
 			if (isDefault) {
@@ -271,7 +355,7 @@ public class SipService {
 		CallOpParam cop = new CallOpParam(true);
 		try {
 			StringBuffer dst_uri = new StringBuffer();
-			dst_uri.append("sip:11111").append(sid).append("@").append(HttpService.OPENTACT_HTTPS_SERVER_URI).append(":").append("5060");
+			dst_uri.append("sip:11111").append(sid).append("@").append(HttpConfig.OPENTACT_HTTPS_SERVER_URI).append(":").append("5060");
 			sipCall.makeCall(dst_uri.toString(), cop);
 		} catch (Exception e) {
 			sipCall.delete();
@@ -292,7 +376,7 @@ public class SipService {
 		opt.setVideoCount(0);
 		try {
 			StringBuffer dst_uri = new StringBuffer();
-			dst_uri.append("sip:99999").append(number).append("@").append(HttpService.OPENTACT_HTTPS_SERVER_URI).append(":").append("5060");
+			dst_uri.append("sip:99999").append(number).append("@").append(HttpConfig.OPENTACT_HTTPS_SERVER_URI).append(":").append("5060");
 			sipCall.makeCall(dst_uri.toString(), cop);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -370,20 +454,13 @@ public class SipService {
 		this.ep = ep;
 	}
 
-	public ListenerInfo getListenerInfo() {
-		if (mListenerInfo != null) {
-			return mListenerInfo;
-		}
-		mListenerInfo = new ListenerInfo();
-		return mListenerInfo;
-	}
 
 	public void setOnIncomingCallListener(OnIncomingCallListener l) {
-		getListenerInfo().onIncomingCallListener = l;
+		onIncomingCallListener = l;
 	}
 
 	public void setOnAnswerCallListener(OnAnswerCallListener l) {
-		getListenerInfo().onAnswerCallListener = l;
+		onAnswerCallListener = l;
 	}
 
 	public void setOnHungupCallListener(OnHungupCallListener l) {
@@ -391,11 +468,11 @@ public class SipService {
 	}
 
 	public void setOnAccountRegisterStateListener(OnAccountRegisterStateListener l) {
-		getListenerInfo().onAccountRegisterStateListener = l;
+		onAccountRegisterStateListener = l;
 	}
 
 	public void setOnCallingListener(OnCallingListener l) {
-		getListenerInfo().onCallingListener = l;
+		onCallingListener = l;
 	}
 
 	public interface OnAccountRegisterStateListener {

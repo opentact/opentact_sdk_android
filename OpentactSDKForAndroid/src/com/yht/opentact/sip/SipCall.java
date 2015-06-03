@@ -17,14 +17,18 @@ import org.pjsip.pjsua2.pjsua_call_media_status;
 
 import com.yht.opentact.sip.SipConstants.CALL_STATE;
 
+/**
+ * sip通话管理类
+ * @author weichao.yht
+ *
+ */
 public class SipCall extends Call {
 
+	/**
+	 * 通话状态常量定义集
+	 */
 	public static Map<pjsip_inv_state, CALL_STATE> callStateMap = new HashMap<pjsip_inv_state, SipConstants.CALL_STATE>() {
-		/**
-		 * 
-		 */
 		private static final long serialVersionUID = 1L;
-
 		{
 			put(pjsip_inv_state.PJSIP_INV_STATE_CALLING, CALL_STATE.CALLING);
 			put(pjsip_inv_state.PJSIP_INV_STATE_CONFIRMED, CALL_STATE.CONFIRMED);
@@ -44,34 +48,35 @@ public class SipCall extends Call {
 		super(acc, call_id);
 	}
 
+	/**
+	 * 通话状态监听
+	 */
 	@Override
 	public void onCallState(OnCallStateParam prm) {
 		/**
-		 * PJSIP_INV_STATE_NULL Before INVITE is sent or received
+		 *	NULL Before INVITE is sent or received
 		 * 
-		 * PJSIP_INV_STATE_CALLING After INVITE is sent
+		 * CALLING After INVITE is sent
 		 * 
-		 * PJSIP_INV_STATE_INCOMING After INVITE is received.
+		 * INCOMING After INVITE is received.
 		 * 
-		 * PJSIP_INV_STATE_EARLY After response with To tag.
+		 * EARLY After response with To tag.
 		 * 
-		 * PJSIP_INV_STATE_CONNECTING After 2xx is sent/received.
+		 * CONNECTING After 2xx is sent/received.
 		 * 
-		 * PJSIP_INV_STATE_CONFIRMED After ACK is sent/received.
+		 * CONFIRMED After ACK is sent/received.
 		 * 
-		 * PJSIP_INV_STATE_DISCONNECTED Session is terminated.
+		 * DISCONNECTED Session is terminated.
 		 */
 		try {
 			CallInfo ci = getInfo();
-//			SipService.onSipCallback.onCallStateListener(callStateMap.get(ci.getState()));
+			SipService.onSipCallback.onCallStateListener(callStateMap.get(ci.getState()));
 			switch (callStateMap.get(ci.getState())) {
 			case CALLING:
-				System.out.println("call state >>>>>>>>>>>>>>>>>CALLING");
-				SipService.getInstance().getListenerInfo().onCallingListener.onCallingListener();
+				SipService.onCallingListener.onCallingListener();
 				break;
 
 			case DISCONNECTED:
-				System.out.println("call state >>>>>>>>>>>>>>>>>DISCONNECTED");
 				SipService.onHungupCallListener.onHungupCallListener(true);
 				this.delete();
 				break;
@@ -101,6 +106,9 @@ public class SipCall extends Call {
 		}
 	}
 
+	/**
+	 * 通话媒体状态监听
+	 */
 	@Override
 	public void onCallMediaState(OnCallMediaStateParam prm) {
 		super.onCallMediaState(prm);

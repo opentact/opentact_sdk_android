@@ -9,6 +9,11 @@ import org.pjsip.pjsua2.OnIncomingCallParam;
 import org.pjsip.pjsua2.OnRegStateParam;
 import org.pjsip.pjsua2.pjsip_status_code;
 
+/**
+ * sip账户类,管理sip账户信息
+ * @author weichao.yht
+ *
+ */
 public class SipAccount extends Account {
 
 	public AccountConfig accountConfig;
@@ -23,6 +28,8 @@ public class SipAccount extends Account {
 	}
 
 	/**
+	 * sip账户注册监听.
+	 * pjsip服务返回码.
 	 * PJSIP_SC_TRYING = 100, PJSIP_SC_RINGING = 180,
 	 * PJSIP_SC_CALL_BEING_FORWARDED = 181, PJSIP_SC_QUEUED = 182,
 	 * PJSIP_SC_PROGRESS = 183, PJSIP_SC_OK = 200, PJSIP_SC_MULTIPLE_CHOICES =
@@ -62,6 +69,9 @@ public class SipAccount extends Account {
 		}
 	}
 
+	/**
+	 * sip来电监听
+	 */
 	@Override
 	public void onIncomingCall(OnIncomingCallParam prm) {
 		SipCall call = new SipCall(this, prm.getCallId());

@@ -1,19 +1,60 @@
 package com.yht.opentact.sip;
 
+/**
+ * sip常量类
+ * 
+ * @author weichao.yht
+ *
+ */
 public class SipConstants {
 
+	/**
+	 * stun服务器地址
+	 */
 	public static final String STUN_SERVER_URI = "108.165.2.111:3478";
+	/**
+	 * 传输端口
+	 */
 	public static final int TRANSPORT_PORT = 5060;
+	/**
+	 * turn服务器地址
+	 */
 	public static final String TURN_SERVER = "108.165.2.111:3478";
+	/**
+	 * turn服务器密码
+	 */
 	public static final String TURN_PASSWORD = "opentact@123456";
+	/**
+	 * TURN服务器用户名
+	 */
 	public static final String TURN_USERNAME = "opentact";
+	/**
+	 * SIP服务器地址
+	 */
 	public static final String SIP_SERVER_URI = "108.165.2.111:5060";
+	/**
+	 * SIP服务器realm类型
+	 */
 	public static final String SIP_SERVER_REALM = "*";
+	/**
+	 * sip服务器主题
+	 */
 	public static final String SIP_SERVER_SCHEME = "digest";
+	/**
+	 * sip服务器数据格式
+	 */
 	public static final int SIP_SERVER_DATATYEP = 0;
-
+	/**
+	 * error msg
+	 */
 	public static final String ON_SIP_CALLBACK_MSG_INCOMINGCALL_ERROR = "there has a incoming call error";
 
+	/**
+	 * 编码ID列表
+	 * 
+	 * @author weichao.yht
+	 *
+	 */
 	public class CODEC_ID {
 		public final static String SPEEX_16000 = "speex/16000/1";
 		public final static String SPEEX_8000 = "speex/8000/1";
@@ -28,19 +69,21 @@ public class SipConstants {
 	}
 
 	/**
-	 *  PJSIP_INV_STATE_NULL Before INVITE is sent or received
+	 * 通话状态代码
 	 * 
-	 * PJSIP_INV_STATE_CALLING After INVITE is sent
+	 * NULL Before INVITE is sent or received
 	 * 
-	 * PJSIP_INV_STATE_INCOMING After INVITE is received.
+	 * CALLING After INVITE is sent
 	 * 
-	 * PJSIP_INV_STATE_EARLY After response with To tag.
+	 * INCOMING After INVITE is received.
 	 * 
-	 * PJSIP_INV_STATE_CONNECTING After 2xx is sent/received.
+	 * EARLY After response with To tag.
 	 * 
-	 * PJSIP_INV_STATE_CONFIRMED After ACK is sent/received.
+	 * CONNECTING After 2xx is sent/received.
 	 * 
-	 * PJSIP_INV_STATE_DISCONNECTED Session is terminated.
+	 * CONFIRMED After ACK is sent/received.
+	 * 
+	 * DISCONNECTED Session is terminated.
 	 * 
 	 * @author weichao.yht
 	 *
@@ -49,6 +92,13 @@ public class SipConstants {
 		NULL, CALLING, INCOMING, EARLY, CONNECTING, CONFIRMED, DISCONNECTED
 	}
 
+	/**
+	 * 通过sip用户名组合sip请求url
+	 * 
+	 * @param username
+	 *            sip用户名
+	 * @return
+	 */
 	public static String buildSipIdUri(String username) {
 		StringBuffer idUri = new StringBuffer();
 		idUri.append("sip:").append(username).append("@").append(SIP_SERVER_URI);
